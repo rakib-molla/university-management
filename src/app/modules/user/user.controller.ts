@@ -1,16 +1,16 @@
-import { NextFunction, Request, Response } from 'express';
+
 import { UserServices } from './user.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
+import catchAsync from '../../utils/catchAsync';
 
-const createStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+
+
+const createStudent  = catchAsync(async (
+  req,
+  res,
 ) => {
-  try {
     // creating a schema validation using zod
-
     const { password, student: studentData } = req.body;
 
     // const zodParseData = studentValidationSchema.parse(studentData);
@@ -27,10 +27,7 @@ const createStudent = async (
       message: 'Student Created Successfully',
       data: result,
     });
-  } catch (error) {
-    next(error);
-  }
-};
+});
 
 export const UserControllers = {
   createStudent,
