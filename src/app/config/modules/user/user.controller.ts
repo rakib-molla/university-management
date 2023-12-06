@@ -9,7 +9,7 @@ const createStudent = async (req: Request, res: Response) => {
 
    // const zodParseData = studentValidationSchema.parse(studentData);
 
-   
+   console.log(password);
 
    // will call service function to send this data
    const result = await UserServices.createStudentIntoDB(password, studentData);
