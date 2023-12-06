@@ -1,7 +1,10 @@
-import express, { Application, Request, Response } from 'express';
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import express, { Application,  Request, Response } from 'express';
 import cors from 'cors';
 import { StudentRoutes } from './app/config/modules/student/student.route';
 import { UserRoutes } from './app/config/modules/user/user.route';
+import globalErrorHandler from './app/middleware/globalErrorhandler';
 const app: Application = express();
 
 //parser
@@ -15,5 +18,7 @@ app.use('/api/v1/users', UserRoutes);
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello your server is running ');
 });
+
+app.use(globalErrorHandler)
 
 export default app;
