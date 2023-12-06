@@ -5,6 +5,7 @@ import cors from 'cors';
 import { StudentRoutes } from './app/config/modules/student/student.route';
 import { UserRoutes } from './app/config/modules/user/user.route';
 import globalErrorHandler from './app/middleware/globalErrorhandler';
+import notFound from './app/middleware/notFound';
 const app: Application = express();
 
 //parser
@@ -20,5 +21,8 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(globalErrorHandler)
+
+// not found route http status npm
+app.use(notFound);
 
 export default app;
