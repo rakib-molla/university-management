@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
-import studentValidationSchema from './student.validation';
 
 
 
-const getallStudent = async (req: Request, res: Response) => {
+
+const getallStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await StudentServices.getallStudentFromDB();
     res.status(200).json({
@@ -12,16 +12,13 @@ const getallStudent = async (req: Request, res: Response) => {
       message: 'Students are retrieved successfully',
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'something went wrong',
-      error: error,
-    });
+  } catch (error) {
+   
+    next(error)
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response) => {
+const getSingleStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
@@ -30,16 +27,12 @@ const getSingleStudent = async (req: Request, res: Response) => {
       message: 'student is retrieved successfully ',
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'something went wrong',
-      error: error,
-    });
+  } catch (error) {
+    next(error)
   }
 };
 
-const deleteStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { studentId } = req.params;
     const result = await StudentServices.deleteStudentFromDB(studentId);
@@ -48,12 +41,8 @@ const deleteStudent = async (req: Request, res: Response) => {
       message: 'student is Deleted successfully ',
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'something went wrong',
-      error: error,
-    });
+  } catch (error) {
+    next(error)
   }
 };
 
