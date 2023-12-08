@@ -33,4 +33,16 @@ const academicSemesterSchema = new Schema<TAcademicSemester>({
  timestamps: true
 })
 
+// is already year and semester exist then give me error  middleware 
+academicSemesterSchema.pre('save', async function(next){
+ const isSemesterExist = await AcademicSemester.findOne({
+  year: this.year,
+  name: this.name,
+ });
+ if(isSemesterExist){
+  throw new Error("Semester is already exist");
+ }
+ next();
+})
+
 export const AcademicSemester = model<TAcademicSemester>('AcademicSemester', academicSemesterSchema)
