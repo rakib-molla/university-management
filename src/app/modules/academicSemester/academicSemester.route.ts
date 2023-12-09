@@ -3,6 +3,7 @@ import { AcademicSemesterControllers } from './academicSemester.controller';
 import validateRequest from '../../middleware/validateRequest';
 import { AcademicSemesterValidations } from './academicSemester.validation';
 
+
 const router = express.Router();
 
 router.post(
@@ -15,5 +16,6 @@ router.post(
 
 router.get('/view-all-academic-semester', AcademicSemesterControllers.getAllAcademicSemester);
 router.get('/view-single-academic-semester/:id', AcademicSemesterControllers.getSingleAcademicSemester);
-router.patch('/update-single-academic-semester/:id', AcademicSemesterControllers.updateSingleAcademicSemester);
+router.patch('/update-single-academic-semester/:id',validateRequest(AcademicSemesterValidations.updateAcademicSemesterValidationSchema), AcademicSemesterControllers.updateSingleAcademicSemester);
+
 export const AcademicSemesterRoutes = router;
