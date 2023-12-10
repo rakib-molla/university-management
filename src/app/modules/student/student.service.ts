@@ -3,6 +3,7 @@ import { Student } from './student.model';
 import AppError from '../../errors/AppErrrors';
 import httpStatus from 'http-status';
 import { User } from '../user/user.model';
+import { TStudent } from './student.interface';
 
 const getallStudentFromDB = async () => {
   const result = await Student.find()
@@ -15,9 +16,8 @@ const getallStudentFromDB = async () => {
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  // const result = await Student.findOne({ id });
-  // using aggregation
-  const result = await Student.findById(id)
+ 
+  const result = await Student.findOne({id})
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -55,15 +55,60 @@ const deleteStudentFromDB = async (id: string) => {
     await session.endSession();
 
     return deletedStudent;
-    
+
   } catch (error) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error('failed to delete student')
   }
+};
+
+const updateSingleStudentFromDB = async (id: string, payload: Partial<TStudent>) => {
+ 
+  const {name, guardian, localGuardian, ...remainingStudentData} = payload
+
+  const modifiedUpdateData: Record<string, unknown>= {
+    ...remainingStudentData,
+  }
+/*
+  guardian:{
+    fatherOccupation: "Teacher"
+  }
+  guardian.fatherOccupation = Teacher
+*/
+
+if(name && Object.keys(name).length){
+  for(const [key, value] of Object.entries(name)){
+    modifiedUpdateData[`name.${key}`] = value
+  }
+}
+
+if(guardian && Object.keys(guardian).length){
+  for(const [key, value] of Object.entries(guardian)){
+    modifiedUpdateData[`guardian.${key}`] = value
+  }
+}
+
+if(localGuardian && Object.keys(localGuardian).length){
+  for(const [key, value] of Object.entries(localGuardian)){
+    modifiedUpdateData[`localGuardian.${key}`] = value
+  }
+}
+
+
+
+  const result = await Student.findOneAndUpdate({id},
+     modifiedUpdateData, {
+      new: true,
+      runValidators: true,
+    });
+    
+  return result;
 };
 
 export const StudentServices = {
   getallStudentFromDB,
   getSingleStudentFromDB,
   deleteStudentFromDB,
+  updateSingleStudentFromDB
 };
