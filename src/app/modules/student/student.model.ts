@@ -7,6 +7,8 @@ import {
   TUserName,
 } from './student.interface';
 import validator from 'validator';
+import AppError from '../../errors/AppErrrors';
+import httpStatus from 'http-status';
 
 
 
@@ -150,17 +152,17 @@ studentSchema.virtual('fullName').get(function () {
 
 
 // Query middleware
-studentSchema.pre('find', function (next) {
+studentSchema.pre('find',async function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 // Query middleware
-studentSchema.pre('findOne', function (next) {
+studentSchema.pre('findOne',async function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 // Query middleware
-studentSchema.pre('aggregate', function (next) {
+studentSchema.pre('aggregate',async function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
@@ -171,5 +173,19 @@ studentSchema.statics.isUserExists = async function (id: string) {
   return existingUser;
 };
 
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+  console.log(query);
+  const isStudentExist = await Student.findOne(query);
+
+  if (!isStudentExist) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'This department does not exist! ',
+    );
+  }
+
+  next();
+});
 
 export const Student = model<TStudent, StudentModel>('Student', studentSchema);
