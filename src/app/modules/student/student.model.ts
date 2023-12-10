@@ -175,16 +175,13 @@ studentSchema.statics.isUserExists = async function (id: string) {
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  console.log(query);
   const isStudentExist = await Student.findOne(query);
-
   if (!isStudentExist) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       'This department does not exist! ',
     );
   }
-
   next();
 });
 
