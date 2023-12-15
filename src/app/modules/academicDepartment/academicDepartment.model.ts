@@ -30,15 +30,15 @@ academicDepartmentSchema.pre('save', async function(next){
 
 
 
-academicDepartmentSchema.pre('findOneAndUpdate', async function(next){
- const query = this.getQuery();
- const isDepartmentExist = await AcademicDepartmentModel.findOne(query);
+// academicDepartmentSchema.pre('findOneAndUpdate', async function(next){
+//  const query = this.getQuery();
+//  const isDepartmentExist = await AcademicDepartmentModel.findOne(query);
 
- if(!isDepartmentExist){
-  throw new AppError(httpStatus.NOT_FOUND,'this department does not exist')
- }
- next();
-})
+//  if(!isDepartmentExist){
+//   throw new AppError(httpStatus.NOT_FOUND,'this department does not exist')
+//  }
+//  next();
+// })
 
 
 
