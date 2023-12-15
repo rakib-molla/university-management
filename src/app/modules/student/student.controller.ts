@@ -6,7 +6,9 @@ import catchAsync from '../../utils/catchAsync';
 
 // catchAsync is higher order function using try catch function
 const getallStudent = catchAsync(async (req, res) => {
-  const result = await StudentServices.getallStudentFromDB();
+  const query = req.query;
+  console.log(query);
+  const result = await StudentServices.getallStudentFromDB(req.query);
   
   sendResponse(res, {
     statusCode: httpStatus.OK,
