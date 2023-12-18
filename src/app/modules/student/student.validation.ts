@@ -1,56 +1,51 @@
-import z from 'zod';
+import { z } from 'zod';
 
-
-// Creating a schema validation using Zod
-const userNameValidationSchema = z.object({
+const createUserNameValidationSchema = z.object({
   firstName: z
     .string()
     .min(1)
     .max(20)
-    .refine((data) => /^[A-Z][a-z]*$/.test(data), {
-      message: 'First name must be capitalized',
+    .refine((value) => /^[A-Z]/.test(value), {
+      message: 'First Name must start with a capital letter',
     }),
   middleName: z.string(),
-  lastName: z.string().refine((data) => /^[A-Za-z]+$/.test(data), {
-    message: 'Last name must contain only alphabetic characters',
-  }),
+  lastName: z.string(),
 });
 
-const guardianValidationSchema = z.object({
+const createGuardianValidationSchema = z.object({
   fatherName: z.string(),
   fatherOccupation: z.string(),
   fatherContactNo: z.string(),
   motherName: z.string(),
-  motherContactNo: z.string(),
   motherOccupation: z.string(),
+  motherContactNo: z.string(),
 });
 
-const localGuardianValidationSchema = z.object({
+const createLocalGuardianValidationSchema = z.object({
   name: z.string(),
   occupation: z.string(),
   contactNo: z.string(),
   address: z.string(),
 });
 
-const createStudentValidationSchema = z.object({
+export const createStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
-      name: userNameValidationSchema,
+      name: createUserNameValidationSchema,
       gender: z.enum(['male', 'female', 'other']),
       dateOfBirth: z.string().optional(),
       email: z.string().email(),
       contactNo: z.string(),
-      emergencyNo: z.string(),
-      bloodGroup: z
-        .enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'])
-        .optional(),
+      emergencyContactNo: z.string(),
+      bloogGroup: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']),
       presentAddress: z.string(),
       permanentAddress: z.string(),
-      guardian: guardianValidationSchema,
-      localGuardian: localGuardianValidationSchema,
-      profileImg: z.string().optional(),
+      guardian: createGuardianValidationSchema,
+      localGuardian: createLocalGuardianValidationSchema,
       admissionSemester: z.string(),
+      profileImg: z.string(),
+      academicDepartment: z.string(),
     }),
   }),
 });
@@ -99,8 +94,6 @@ export const updateStudentValidationSchema = z.object({
     }),
   }),
 });
-
-// export default createStudentValidationSchema;
 
 export const studentValidations = {
   createStudentValidationSchema,

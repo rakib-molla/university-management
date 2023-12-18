@@ -1,48 +1,66 @@
-import { Schema, model } from "mongoose";
-import { TAcademicSemester, } from "./academicSemester.interface";
-import { AcademicSemesterCode, AcademicSemesterName, Months } from "./academicSemester.constant";
+import { Schema, model } from 'mongoose';
+import {
+  AcademicSemesterCode,
+  AcademicSemesterName,
+  Months,
+} from './academicSemester.constant';
+import { TAcademicSemester } from './academicSemester.interface';
 
+const acdemicSemesterSchema = new Schema<TAcademicSemester>(
+  {
+    name: {
+      type: String,
+      required: true,
+      enum: AcademicSemesterName,
+    },
+    year: {
+      type: String,
+      required: true,
+    },
+    code: {
+      type: String,
+      required: true,
+      enum: AcademicSemesterCode,
+    },
+    startMonth: {
+      type: String,
+      required: true,
+      enum: Months,
+    },
+    endMonth: {
+      type: String,
+      required: true,
+      enum: Months,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
 
+acdemicSemesterSchema.pre('save', async function (next) {
+  const isSemesterExists = await AcademicSemester.findOne({
+    year: this.year,
+    name: this.name,
+  });
 
-const academicSemesterSchema = new Schema<TAcademicSemester>({
- name:{
-  type: String,
-  required: true,
-  enum: AcademicSemesterName,
- },
- code:{
-  type: String,
-  required: true,
-  enum: AcademicSemesterCode,
- },
- year:{
-  type: String,
-  required: true,
- },
- startMonth:{
-  type: String,
-  required: true,
-  enum: Months
- },
- endMonth:{
-  type: String,
-  enum: Months,
- }
+  if (isSemesterExists) {
+    throw new Error('Semester is already exists !');
+  }
+  next();
+});
 
-},{
- timestamps: true
-})
+export const AcademicSemester = model<TAcademicSemseter>(
+  'AcademicSemester',
+  acdemicSemesterSchema,
+);
 
-// is already year and semester exist then give me error  middleware 
-academicSemesterSchema.pre('save', async function(next){
- const isSemesterExist = await AcademicSemester.findOne({
-  year: this.year,
-  name: this.name,
- });
- if(isSemesterExist){
-  throw new Error("Semester is already exist");
- }
- next();
-})
+// Name Year
+//2030 Autumn => Created
+// 2031 Autumn
+//2030 Autumn => XXX
+//2030 Fall => Created
 
-export const AcademicSemester = model<TAcademicSemester>('AcademicSemester', academicSemesterSchema)
+// Autumn 01
+// Summar 02
+// Fall 03

@@ -1,20 +1,19 @@
-import { Schema, model } from 'mongoose';
-import { TUser } from './user.interface';
-import config from '../../config/index';
 import bcrypt from 'bcrypt';
-
+import { Schema, model } from 'mongoose';
+import config from '../../config';
+import { TUser } from './user.interface';
 const userSchema = new Schema<TUser>(
   {
     id: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
-    needsChangePassword: {
+    needsPasswordChange: {
       type: Boolean,
       default: true,
     },
@@ -38,18 +37,19 @@ const userSchema = new Schema<TUser>(
 );
 
 userSchema.pre('save', async function (next) {
-  const user = this; // this refer for document
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; // doc
+  // hashing password and save into DB
   user.password = await bcrypt.hash(
     user.password,
-    Number(config.bcrype_salt_round),
+    Number(config.bcrypt_salt_rounds),
   );
   next();
 });
 
-// set "" after saving password
+// set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
-  // console.log( 'post hook: we save to data');
   next();
 });
 
